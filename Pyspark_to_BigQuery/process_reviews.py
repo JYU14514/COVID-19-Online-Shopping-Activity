@@ -1,12 +1,7 @@
 import sys
-# Look in the unzipped 'pydeps' folder for our libraries
-sys.path.insert(0, 'pydeps')
-
-import sys
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import StructType, StructField, StringType, FloatType
-from textblob import TextBlob
 
 # ==========================================
 # 1. DYNAMIC CONFIGURATION
@@ -56,11 +51,6 @@ df_joined = df_reviews.join(df_meta_clean, on="parent_asin", how="left")
 # ==========================================
 print("Applying feature engineering and timeline filters...")
 
-def get_sentiment(text):
-    return TextBlob(text).sentiment.polarity if text else 0.0
-
-sentiment_udf = F.udf(get_sentiment, FloatType())
-
 df_final = df_joined \
     .withColumn("review_date", F.to_date(F.from_unixtime(F.col("timestamp") / 1000))) \
     .withColumn("review_year", F.year("review_date")) \
@@ -73,7 +63,7 @@ df_final = df_joined \
                 ) \
     .withColumn("review_length", F.length(F.col("text"))) \
     .withColumn("has_shipping_keyword", F.lower(F.col("text")).rlike("delay|shipping|arrived|customer service")) \
-    .withColumn("sentiment_score", sentiment_udf(F.col("text"))) \
+    .withColumn("sentiment_score", (F.col("rating") - 3) / 2.0) \
     .select(
     "review_date", "year_month", "review_year", "pandemic_phase",
     "parent_asin", "product_title", "main_category",
