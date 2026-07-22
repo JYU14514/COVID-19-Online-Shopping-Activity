@@ -19,7 +19,7 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # Cloud Storage and BigQuery paths dynamically update based on the category
-gcs_bucket = "your-bucket-name"
+gcs_bucket = "amazon-reviews-project-data"
 gcp_project_id = "project-4dd1cf45-07ac-448f-839"
 
 review_path = f"gs://{gcs_bucket}/raw_reviews/{category_name}.jsonl"
