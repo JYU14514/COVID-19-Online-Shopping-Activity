@@ -36,3 +36,13 @@ GROUP BY
 ORDER BY
     pandemic_phase,
     category_share_pct DESC;
+
+SELECT
+    review_year,
+    COUNT(*) AS review_count
+FROM
+    `project-4dd1cf45-07ac-448f-839.amazon_analysis.*`
+GROUP BY
+    review_year
+ORDER BY
+    review_year;
